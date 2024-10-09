@@ -1,0 +1,70 @@
+@import url("observablehq:default.css");
+@import url("observablehq:theme-air.css") (prefers-color-scheme: light);
+@import url("observablehq:theme-near-midnight.css") (prefers-color-scheme: dark);
+
+
+:root {
+  /* color-scheme: light dark; */
+  --monospace:
+    Menlo,
+    Consolas,
+    monospace;
+  --monospace-font: 14px/1.5 var(--monospace);
+  --serif:
+    "Georgia",
+    "Source Serif Pro",
+    "Iowan Old Style",
+    "Apple Garamond",
+    "Palatino Linotype",
+    "Times New Roman",
+    "Droid Serif",
+    Times,
+    serif,
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Segoe UI Symbol";
+  --sans-serif:
+    -apple-system,
+    BlinkMacSystemFont,
+    arial,
+    avenir,
+    helvetica,
+    "helvetica neue",
+    ubuntu,
+    roboto,
+    noto,
+    "segoe ui",
+    arial,
+    sans-serif;
+
+}
+
+
+
+@media (prefers-color-scheme: light){
+  :root {
+  --theme-foreground: #2E3440;
+  --theme-foreground-focus: oklch(68.69% 0.1565 204.57);
+  --theme-background-a: oklch(95.2% 0.016 94.2); 
+
+  --theme-blue: #0091D5;
+  --theme-green: #6BB187;
+  --theme-red: #AC3E31;
+  --theme-yellow: #DBAE59;
+  
+  }
+  }
+  
+  @media (prefers-color-scheme: dark){
+  :root {
+    --theme-foreground: oklch(95.2% 0.016 94.2);
+    --theme-foreground-focus: oklch(72.5% 0.1644 201.18); 
+    --theme-background-b: #171614;
+
+    --theme-blue: #4269d0;
+    --theme-green: #3ca951;
+    --theme-red: #ff725c;
+    --theme-yellow: #efb118;
+
+  }}
+  
