@@ -4,18 +4,13 @@ title: LLM service cost scenarios
 # LLM service cost scenarios
 
 ```js
-const jsonURL = 'https://raw.githubusercontent.com/BerriAI/litellm/refs/heads/main/model_prices_and_context_window.json'
-const litellm =  d3.json(jsonURL)
+const litellmcost = FileAttachment("data/litellmcost.json").json();
+```
+```js
+const example = litellmcost
 ```
 
 ```js
-const example = Object.keys(litellm).map( key => {
-  return {
-    id: key,
-    ...litellm[key]
-  };
-}).slice(1); // slice to remove the first entry, which is a sample/example.
-
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -25,7 +20,8 @@ function calc_litellm_cost(provider) {
   var costs = u.users * ((u.calls*u.avgI *provider.input_cost_per_token) + (u.calls*u.avgO *provider.output_cost_per_token))
   return costs
 } 
-
+```
+```js
 const allcostdata = example.map(d => {
   return {
   model: d.id,
@@ -57,7 +53,7 @@ const scenarioOptions = view(Inputs.bind(Inputs.button([
 ```
 
 ```js
-const modelSelection = view(Inputs.select(example, {label: "Select a model", format: x => x.id + ' (' + x.litellm_provider + ')'}))
+const modelSelection = view(Inputs.select(example, {label: "Select a model", format: x => x.id + ' (' + x.litellm_provider + ')', value: this?.value ?? 0}))
 ```
 
 Based on crowdsourced cost data from [LiteLLM](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json) for **${modelSelection.id}** (${modelSelection.litellm_provider})  
@@ -94,3 +90,22 @@ const chart = Plot.plot({
 })
 display(chart)
 ```
+
+<details>
+  <summary>carbon</summary>
+
+Enter your assumed rate of energy consumption (kWh per million tokens) and grid emission factor (grams of CO₂ equivalent per kWh) to produce a back-of-the-envelope estimate of carbon emissions from model inference.
+
+- Daily ${d3.format(",.2f")((u.users*u.calls)*(u.avgI+u.avgO)/1e6*energy*co2/1e3)} kgCO₂e
+- Annual ${d3.format(",.2f")((u.users*u.calls)*(u.avgI+u.avgO)/1e6*energy*co2/1e3*365)} kgCO₂e  
+
+${d3.format(",.0f")((u.users*u.calls)*(u.avgI+u.avgO)/1e6*365)} million tokens and ${d3.format(",.0f")((u.users*u.calls)*(u.avgI+u.avgO)/1e6*energy*365)} kWh per year 
+
+```js
+const energy = view(Inputs.range([0.01,30],{value: 1.11, transform: Math.sqrt, step: 0.01, label: "kWh/Mtok"}));
+const co2 = view(Inputs.range([0,970],{value: 375, transform: Math.sqrt, step: 1, label: "gCO₂e/kWh"}))
+
+
+```
+
+</details>
