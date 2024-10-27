@@ -161,20 +161,22 @@ const binnedData = histBuckets.map((d,i)=>({
 Plot.plot({
   y: {
     clamp: false,
-    label:"count"
+    label:"count",
+    tickFormat:'s'
   },
   color: { ...color, legend: false },
   marks: [
+    Plot.ruleX([dataMin, dataMax,dataMean], { strokeOpacity:0.5 }),
     Plot.rectY(
-      binnedData,{x1: "x1", x2: "x2", y2: "value", inset: 0.2, fill:"x1"}
+      binnedData,{x1: "x1", x2: "x2", y2: "value", insetLeft: -0.2,insetRight: -0.2, fill:"x1"}
     ),
     Plot.text(
       [
-        [colorMin, "color min"],
-        [colorMax, "color max"],
+        [colorMin, "min"],
+        [colorMax, "max"],
         [dataMean ,"x̄"],
-        [dataMin,"min"],
-        [dataMax,"max"]
+        //[dataMin,"min"],
+        //[dataMax,"max"]
       ],
       {
         x: "0",
@@ -185,13 +187,12 @@ Plot.plot({
         dy: -150
       }
     ),
-    Plot.ruleX([colorMin, colorMax], { strokeDasharray: "2,2" }),
-    Plot.ruleX([dataMin, dataMax,dataMean], { strokeDasharray: "2,2", strokeOpacity:0.5 })
+    Plot.ruleX([colorMin, colorMax], { strokeDasharray: "2,2" })
   ],
   height: 200,
   width: width,
-  marginRight: 100,
-  marginLeft: 50
+  marginRight: 50,
+  //marginLeft: 10
 })
 
 ```
@@ -222,4 +223,4 @@ document.getElementById("txtout").innerHTML = formattedCmap
 
 <pre id="txtout"></pre>
 
-Special thanks to the [gdal `gdaldem color-relief`](https://gdal.org/en/latest/programs/gdaldem.html#color-relief) function for bringing color to world, and to [dicopal.js](https://github.com/riatelab/dicopal.js) for making it easy to pull in a broad collection of color palettes.  
+Special thanks to the [gdal `gdaldem color-relief`](https://gdal.org/en/latest/programs/gdaldem.html#color-relief) function for bringing color to the world, and to [dicopal.js](https://github.com/riatelab/dicopal.js) for making it easy to pull in a broad collection of color palettes.  
