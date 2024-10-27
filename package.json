@@ -12,7 +12,8 @@
     "@observablehq/framework": "^1.10.1",
     "d3": "^7.9.0",
     "d3-dsv": "^3.0.1",
-    "d3-time-format": "^4.1.0"
+    "d3-time-format": "^4.1.0",
+    "dicopal": "^0.8.1"
   },
   "devDependencies": {
     "rimraf": "^5.0.5"
