@@ -74,8 +74,8 @@ function ramp(palette, n = 128) {
   d3.select(canvas).attr("width", n).attr("height", 1);
   const context = canvas.getContext("2d");
   canvas.style.margin = "2px";
-  canvas.style.width = "30px";
-  canvas.style.height = "30px";
+  canvas.style.width = "20px";
+  canvas.style.height = "20px";
   canvas.style.imageRendering = "-moz-crisp-edges";
   canvas.style.imageRendering = "pixelated";
   canvas.style.cursor = "pointer";

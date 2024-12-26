@@ -45,7 +45,7 @@
   :root {
   --theme-foreground: #2E3440;
   --theme-foreground-focus: oklch(68.69% 0.1565 204.57);
-  --theme-background-a: oklch(95.2% 0.016 94.2); 
+  --theme-background-a: oklch(97.96% 0.0057 84.57); 
 
   --theme-blue: #0091D5;
   --theme-green: #6BB187;
@@ -57,7 +57,7 @@
   
   @media (prefers-color-scheme: dark){
   :root {
-    --theme-foreground: oklch(95.2% 0.016 94.2);
+    --theme-foreground: oklch(97.96% 0.0057 84.57);
     --theme-foreground-focus: oklch(72.5% 0.1644 201.18); 
     --theme-background-b: #171614;
 
