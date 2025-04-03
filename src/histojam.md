@@ -42,7 +42,9 @@ const histBinMax = histData.bands[band].histogram.max
 const histBinCount = histData.bands[band].histogram.count
 const histBuckets = histData.bands[band].histogram.buckets
 const minMax = [Math.floor(dataMin), Math.ceil(dataMax)]
-
+const maxAbs = Math.max(...minMax.map(Math.abs));
+const absMinMax = [-maxAbs,maxAbs]
+// const wideMinMax = [-absMinMax,absMinMax]
 ```
 ```js
 const cIn = Inputs.textarea({label: "Colors", rows: 2, value: 'purple,#ED2A24'}); 
@@ -118,8 +120,11 @@ const selection = dicopalFile.filter(d => cmapFilter.includes(d.type))
 const colorScheme = colorVals
 ```
 ```js
-const colorMin = view(Inputs.range(minMax, {label: "Color min", value: minMax[0], step: 0.01}));
-const colorMax = view(Inputs.range(minMax, {label: "Color max", value: minMax[1], step: 0.01}));
+display(absMinMax)
+```
+```js
+const colorMin = view(Inputs.range(absMinMax, {label: "Color min", value: minMax[0], step: 0.01}));
+const colorMax = view(Inputs.range(absMinMax, {label: "Color max", value: minMax[1], step: 0.01}));
 
 const interpolator = view(Inputs.select(
   new Map([
