@@ -75,7 +75,7 @@ const scenarioPresets = [
   { name: "Contract/legal review", avgI: 15000, avgO: 2000, note: "Legal document analysis" },
 
   // Code tasks
-  { name: "Function generation", avgI: 300, avgO: 400, note: "Small code snippets" },
+  { name: "Function generation", avgI: 250, avgO: 400, note: "Small code snippets" },
   { name: "Code explanation", avgI: 800, avgO: 600, note: "Explain existing code" },
   { name: "File-level code review", avgI: 2500, avgO: 1200, note: "Review single file" },
   { name: "Bug fix assistance", avgI: 1500, avgO: 800, note: "Debug with context" },
@@ -196,20 +196,81 @@ const chart = Plot.plot({
 display(chart)
 ```
 
-<details>
+<details open>
   <summary>carbon</summary>
 
 Enter your assumed rate of energy consumption (kWh per million tokens) and grid emission factor (grams of CO₂ equivalent per kWh) to produce a back-of-the-envelope estimate of carbon emissions from model inference.
+
+- Daily ${d3.format(",.2f")((u.sessions)*(u.avgI+u.avgO)/1e6*energy*co2/1e3)} kgCO₂e
+- Annual ${d3.format(",.2f")((u.sessions)*(u.avgI+u.avgO)/1e6*energy*co2/1e3*365)} kgCO₂e
+
+${d3.format(",.0f")((u.sessions)*(u.avgI+u.avgO)/1e6*365)} million tokens and ${d3.format(",.0f")((u.sessions)*(u.avgI+u.avgO)/1e6*energy*365)} kWh per year
+
 
 ```js
 const energy = view(Inputs.range([0.01,30],{value: 1.11, transform: Math.sqrt, step: 0.01, label: "kWh/Mtok"}));
 const co2 = view(Inputs.range([0,970],{value: 375, transform: Math.sqrt, step: 1, label: "gCO₂e/kWh"}));
 ```
 
-- Daily ${d3.format(",.2f")((u.sessions)*(u.avgI+u.avgO)/1e6*energy*co2/1e3)} kgCO₂e
-- Annual ${d3.format(",.2f")((u.sessions)*(u.avgI+u.avgO)/1e6*energy*co2/1e3*365)} kgCO₂e
 
-${d3.format(",.0f")((u.sessions)*(u.avgI+u.avgO)/1e6*365)} million tokens and ${d3.format(",.0f")((u.sessions)*(u.avgI+u.avgO)/1e6*energy*365)} kWh per year
+<details>
+<summary>kWh/Mtok references</summary>
+
+| Study / model | kWh/Mtok | Context | Original metric | Source |
+| --- | --- | --- | --- | --- |
+| GPT-3 175B (GPT-3 paper) | **~13** | GPT-3 on 2020 infra | 0.4 kWh per 100 pages (~30k tokens) | [GPT-3 paper](https://arxiv.org/abs/2005.14165) |
+| Husom et al. (older ChatGPT) | **~9** | GPT-3-era ChatGPT | ~9 mWh/token | [Husom et al. summary](https://github.com/kmaasrud/ai-ecosystem-carbon-footprint) |
+| LLaMA-65B — Samsi et al. | **~0.8–1.1**| LLaMA-65B on V100/A100 | ~3–4 J/token | [From Words to Watts](https://arxiv.org/abs/2309.04360) |
+| Local Llama-3 8B (Baquero) | **~0.17** | 8B model on Apple M3 | <200 J for ~333 tokens | [Baquero CACM blog](https://cacm.acm.org/blogcacm/the-energy-footprint-of-humans-and-large-language-models/) |
+| Llama-3.3-70B (Lin 2025) | **~0.11** | 8×H100, FP8, batch 128 | 0.39 J/token | [llm-tracker entry](https://www.llm-tracker.info/) |
+| Generic 4×H100 node (Arthur) | **~2.7–5.2** (best); **~10–20** (worst) | 4×H100; batch size affects J/token | 9.6–72 J/token | [Arthur writeup](https://www.architect.ai/p/another-look-at-per-token-energy) |
+| GPT-4o (Epoch AI) | **~0.375** | 0.3 Wh/query, 800-token assumption | 0.3 Wh per typical GPT-4o query | [Epoch AI](https://epochai.org/blog/how-much-energy-does-chatgpt-use) |
+| ChatGPT average query (Altman) | **~0.425** | 0.34 Wh/query, 800-token assumption | 0.34 Wh per ChatGPT query | [Altman – Gentle Singularity](https://blog.samaltman.com/the-gentle-singularity) |
+| Gemini Apps – full stack | **~0.30** | 0.24 Wh per prompt, 800-token assumption | 0.24 Wh median text prompt | [Google Cloud blog](https://cloud.google.com/blog/products/infrastructure/measuring-the-environmental-impact-of-ai-inference) |
+| Gemini Apps – active chips only | **~0.125** | 0.10 Wh per prompt, 800-token assumption | 0.10 Wh median prompt | [Google Cloud blog](https://cloud.google.com/blog/products/infrastructure/measuring-the-environmental-impact-of-ai-inference) |
+| Mistral Large 2 (LCA) | **~7–11** | Lifecycle analysis; CO₂-based | 1.14 gCO₂e per 400-token response | [Mistral LCA](https://mistral.ai/news/our-contribution-to-a-global-environmental-standard-for-ai/) |
+| DitchCarbon H100 example | **~23** | Single H100, no batching | 0.008 kWh per ~350 tokens | [DitchCarbon blog](https://ditchcarbon.com/blog/the-real-carbon-cost-of-an-ai-token/) |
+| Older “3 Wh per ChatGPT response” estimate | **~3.75** | 3 Wh/query, 800-token assumption | 3 Wh per response | [kmaasrud summary](https://github.com/kmaasrud/ai-ecosystem-carbon-footprint) |
+
+</details>
+
+<details>
+<summary>Grid Emission Factors (gCO₂e/kWh)</summary>
+
+Location-based scope 2
+
+### Location-Based Grid Factors (Lifecycle-ish)
+
+| Grid Type              | Practical Estimate (gCO₂e/kWh) | Notes |
+|------------------------|-------------------------------|-------|
+| Very clean grid        | **~50**                       | Hydro / nuclear / high-renewable grids (e.g., Nordics, France, Quebec) |
+| Typical rich-country   | **350–450**                   | OECD averages; mixed gas + renewables + some coal |
+| Coal-heavy grid        | **700–800**                   | India, South Africa, SE Asia regions; close to coal plant lifecycle values |
+
+### Fuel-Specific Lifecycle “Best Estimate” Factors
+
+| Fuel / Technology      | Best Estimate (gCO₂e/kWh)     | Notes |
+|------------------------|-------------------------------|-------|
+| 100% coal              | **~900**                       | Conventional coal plant fleet (median lifecycle) |
+| 100% natural gas (NGCC)| **~450**                       | Modern combined-cycle gas plants |
+| Coal with CCS          | **~250–350**                  | Depends heavily on configuration & capture rate |
+| NGCC with CCS          | **~130–200**                  | Lifecycle; assumes effective methane control |
+| Wind / Solar / Nuclear | **≤50**                        | Representative lifecycle numbers for high-quality clean generation |
+
+
+| Cloud Region | Approx. Grid EF (gCO₂e/kWh) | Location / Grid Basis                         | 
+| ------------ | --------------------------- | --------------------------------------------- | 
+| GCP us-central1  | ≈**350**                    | Iowa, US (state grid mix)                     |
+| GCP europe-west1 | ≈**110**                    | Belgium (country average)                     |
+| GCP us-east1     | ≈**255**                    | South Carolina, US (state grid mix)           |
+| AWS us-west-2    | ≈**135**                    | Oregon, US (state grid mix)                   |
+| AWS us-east-1    | ≈**270**                    | Northern Virginia, US (state grid mix) |
+| AWS eu-central-1 | ≈**420**                    | Frankfurt, Germany (national grid mix)        | 
+
+
+
+
+</details>
 
 </details>
 
