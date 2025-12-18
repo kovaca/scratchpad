@@ -18,12 +18,8 @@ const params = {
   avgO: urlParams.has("avgO") ? Number(urlParams.get("avgO")) : null,
   model: urlParams.get("model"),
   provider: urlParams.get("provider"),
-  router1: urlParams.get("r1"),
-  router2: urlParams.get("r2"),
-  router3: urlParams.get("r3"),
-  pct1: urlParams.has("p1") ? Number(urlParams.get("p1")) : null,
-  pct2: urlParams.has("p2") ? Number(urlParams.get("p2")) : null,
-  pct3: urlParams.has("p3") ? Number(urlParams.get("p3")) : null,
+  energy: urlParams.has("energy") ? Number(urlParams.get("energy")) : null,
+  co2: urlParams.has("co2") ? Number(urlParams.get("co2")) : null,
 };
 ```
 
@@ -208,8 +204,8 @@ ${d3.format(",.0f")((u.sessions)*(u.avgI+u.avgO)/1e6*365)} million tokens and ${
 
 
 ```js
-const energy = view(Inputs.range([0.01,30],{value: 1.11, transform: Math.sqrt, step: 0.01, label: "kWh/Mtok"}));
-const co2 = view(Inputs.range([0,970],{value: 375, transform: Math.sqrt, step: 1, label: "gCO₂e/kWh"}));
+const energy = view(Inputs.range([0.01,30],{value: params.energy ?? 1.11, transform: Math.sqrt, step: 0.01, label: "kWh/Mtok"}));
+const co2 = view(Inputs.range([0,970],{value: params.co2 ?? 375, transform: Math.sqrt, step: 1, label: "gCO₂e/kWh"}));
 ```
 
 
@@ -408,18 +404,8 @@ const shareUrl = (() => {
   p.set("avgO", Math.round(u.avgO));
   p.set("model", modelSelection.id);
   p.set("provider", modelSelection.litellm_provider);
-  if (routerModels.model1) {
-    p.set("r1", routerModels.model1.id);
-    p.set("p1", routerModels.pct1);
-  }
-  if (routerModels.model2) {
-    p.set("r2", routerModels.model2.id);
-    p.set("p2", routerModels.pct2);
-  }
-  if (routerModels.model3) {
-    p.set("r3", routerModels.model3.id);
-    p.set("p3", routerModels.pct3);
-  }
+  p.set("energy", energy);
+  p.set("co2", co2);
   return `${window.location.origin}${window.location.pathname}?${p.toString()}`;
 })();
 
